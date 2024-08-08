@@ -120,6 +120,11 @@ if __name__ == '__main__':
     if not openai.api_key:
         raise ValueError('No openAI API key found. Set the OPENAI_API_KEY variable.')
     
+    try:
+        app.run(host='0.0.0.0', port=3000, debug=True, use_reloader=False)
+    except Exception as e:
+        subprocess.run(['kill', '-9', 'python'])  # Replace with a proper error handling mechanism
+    
     if not app.run(debug=True, use_reloader=False):
         subprocess.run(['kill', '-9', 'python'])#write a try except condition to catch when the address is already in use
 
