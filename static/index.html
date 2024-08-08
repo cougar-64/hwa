@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Healthy water and Air chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Healthy water and air chat</h1>
+        <input type="text" id="user-input" autofocus placeholder="How can I help you today?">
+        <button onclick="sendMessage()">Send</button>
+        <div id="chat-output"></div>
+    </div>
+    
+    <script>
+        const API_URL = '/chat';
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (!userInput) return;
+
+            const chatOutput =  document.getElementById('chat-output');
+            chatOutput.innerHTML += `<div class="message user">You: ${userInput}</div>`;
+        try {
+            const response = await fetch(API_URL, { //adding the rest of the URL fixed the "method not allowed" error 
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({chat: userInput}),
+                credentials: 'include'
+            });
+
+            console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+
+            if (data.error) {
+                chatOutput.innerHTML += `<div class="message bot">Error: ${data.error}</div>`;
+            }
+            else {
+                const reply = data.response;
+                chatOutput.innerHTML += `<div class="message bot">Bot: ${reply}</div>`;
+                }
+        } catch (error) {
+            chatOutput.innerHTML += `<div class="message bot">Error: ${error.message}</div>`;
+        }
+        
+        document.getElementById('user-input').value = ''; 
+
+        chatOutput.scrollTop = chatOutput.scrollHeight;
+    }
+    </script>
+</body>
+</html>
+
